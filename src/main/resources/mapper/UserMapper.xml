@@ -19,6 +19,14 @@
         INSERT INTO user (username, password, create_time, update_time)
         VALUES (#{username}, #{password}, #{createTime}, #{updateTime})
     </insert>
+    <update id="update">
+    <!-- @Update("update user set nickname=#{nickname},email=#{email},update_time=#{updateTime} where id=#{id}") -->
+        UPDATE user
+        SET nickname = #{nickname},
+            email = #{email},
+            update_time = #{updateTime}
+        WHERE id = #{id}
+    </update>
 
     <!-- 根据用户名查询用户 -->
     <select id="findByUserName" parameterType="String" resultMap="userResultMap">

@@ -1,8 +1,10 @@
 package com.itheima.interceptors;
 
 import com.itheima.utils.JwtUtil;
+import com.itheima.utils.ThreadLocalUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -26,5 +28,10 @@ public class LoginInterceptor implements HandlerInterceptor {
             //不放行
             return false;
         }
+    }
+    @Override
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception{
+        //移除ThreadLocal中的数据
+        ThreadLocalUtil.remove();
     }
 }

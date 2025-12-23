@@ -6,6 +6,7 @@ import com.itheima.pojo.User;
 import com.itheima.service.UserService;
 import com.itheima.utils.JwtUtil;
 import com.itheima.utils.Md5Util;
+import com.itheima.utils.ThreadLocalUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Pattern;
@@ -14,11 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -87,5 +87,31 @@ public class UserController {
             return Result.success(token);
         }
         return Result.error(Message.PASSWORD_ERROR);
+    }
+
+    /**
+     * 获取用户的详细信息
+     * @return
+     */
+    @GetMapping("/userInfo")
+    @Operation(summary = "获取用户的详细信息")
+    public Result<User> userInfo(){
+        log.info("获取用户详细信息");
+        Map<String,Object> map = ThreadLocalUtil.get();//获取当前用户信息
+        String username =(String) map.get("username");//获取用户名
+        User user=userService.findByUserName(username);//根据用户名查询用户
+        return Result.success(user);
+    }
+
+    /**
+     * 修改用户信息
+     * @return
+     */
+    @PutMapping("/update")
+    @Operation(summary = "修改用户信息")
+    public Result update(@RequestBody @Validated User user){
+        log.info("修改用户信息，用户信息：{}",user);
+        userService.update(user);
+        return Result.success();
     }
 }

@@ -21,4 +21,10 @@ public interface UserMapper {
      * @return User
      */
     User findByUserName(String username);
+
+    /**
+     * 修改用户信息
+     * @param user
+     */
+    void update(User user);
 }

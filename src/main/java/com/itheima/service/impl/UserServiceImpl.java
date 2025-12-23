@@ -38,4 +38,14 @@ public class UserServiceImpl implements UserService {
         User user = userMapper.findByUserName(username);
         return user;
     }
+
+    /**
+     * 修改用户信息
+     * @param user
+     */
+    @Override
+    public void update(User user) {
+        user.setUpdateTime(LocalDateTime.now());
+        userMapper.update(user);
+    }
 }

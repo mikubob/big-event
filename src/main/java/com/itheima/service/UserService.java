@@ -1,6 +1,7 @@
 package com.itheima.service;
 
 import com.itheima.pojo.User;
+import org.hibernate.validator.constraints.URL;
 
 public interface UserService {
     /**
@@ -22,4 +23,16 @@ public interface UserService {
      * @param user
      */
     void update(User user);
+
+    /**
+     * 用户修改头像
+     * @param avatarUrl
+     */
+    void updateAvatar(@URL String avatarUrl);
+
+    /**
+     * 用户修改密码
+     * @param newPwd
+     */
+    void updatePwd(String newPwd);
 }

@@ -16,4 +16,10 @@ public class Message {
     public static final String ALL_ARTICLE = "所有文章数据";
     //未登录
     public static final String NOT_LOGIN = "未登录";
+    //缺少必要的参数
+    public static final String PARAM_ERROR = "缺少必要的参数";
+    //原密码填写不正确
+    public static final String OLD_PWD_ERROR = "原密码填写不正确";
+    //两次输入的密码不一致
+    public static final String RE_PWD_ERROR = "两次输入的密码不一致";
 }

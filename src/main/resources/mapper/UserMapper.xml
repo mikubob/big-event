@@ -27,6 +27,19 @@
             update_time = #{updateTime}
         WHERE id = #{id}
     </update>
+    <update id="updateAvatar">
+        /*"update user set user_pic=#{avatarUrl},update_time=now() where id=#{id}"*/
+        UPDATE user
+        SET user_pic = #{avatarUrl},
+            update_time = #{updateTime}
+        WHERE id = #{id}
+    </update>
+    <update id="updatePwd">
+        UPDATE user
+        SET password = #{newPwd},
+            update_time = #{updateTime}
+        WHERE id = #{id}
+    </update>
 
     <!-- 根据用户名查询用户 -->
     <select id="findByUserName" parameterType="String" resultMap="userResultMap">

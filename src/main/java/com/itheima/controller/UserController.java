@@ -11,9 +11,11 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Pattern;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.validator.constraints.URL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -112,6 +114,56 @@ public class UserController {
     public Result update(@RequestBody @Validated User user){
         log.info("修改用户信息，用户信息：{}",user);
         userService.update(user);
+        return Result.success();
+    }
+
+    /**
+     * 用户修改头像
+     * @param avatarUrl
+     * @return
+     */
+    @PutMapping("/updateAvatar")
+    @Operation(summary = "用户修改头像")
+    public Result updateAvatar(@RequestParam @URL String avatarUrl){
+        log.info("用户修改头像，头像地址：{}",avatarUrl);
+        userService.updateAvatar(avatarUrl);
+        return Result.success();
+    }
+
+    /**
+     * 用户修改密码
+     * @param params
+     * @param token
+     * @return
+     */
+    @PatchMapping("/updatePwd")
+    @Operation(summary = "用户修改密码")
+    public Result updatePwd(@RequestBody Map<String,String> params,@RequestHeader("Authorization") String token){
+        log.info("用户修改密码，参数：{},token：{}",params,token);
+        //1.校验参数
+        String oldPwd=params.get("old_pwd");//旧密码
+        String newPwd=params.get("new_pwd");//新密码
+        String rePwd = params.get("re_pwd");//重复密码
+        if(!StringUtils.hasLength(oldPwd)||!StringUtils.hasLength(newPwd)||!StringUtils.hasLength(rePwd)){
+            return Result.error(Message.PARAM_ERROR);
+        }
+        //原密码是否正确
+        //根据用户名拿到原密码，再和oldPwd进行比较
+        Map<String,Object> map = ThreadLocalUtil.get();
+        String username = (String) map.get("username");//获取用户名
+        User Loginuser = userService.findByUserName(username);//根据用户名查询用户
+        if(!Md5Util.checkPassword(oldPwd,Loginuser.getPassword())){
+            return Result.error(Message.OLD_PWD_ERROR);
+        }
+        //newPwd和rePwd是否一致
+        if(!newPwd.equals(rePwd)){
+            return Result.error(Message.RE_PWD_ERROR);
+        }
+        //2.调用service完成密码的更新
+        userService.updatePwd(newPwd);
+        //删除redis中的token
+        ValueOperations<String, String> operations = stringRedisTemplate.opsForValue();//获取操作对象
+        operations.getOperations().delete(token);//删除token
         return Result.success();
     }
 }

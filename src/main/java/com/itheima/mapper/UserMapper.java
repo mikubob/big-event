@@ -27,4 +27,19 @@ public interface UserMapper {
      * @param user
      */
     void update(User user);
+
+    /**
+     * 用户修改头像
+     * @param avatarUrl
+     * @param id
+     */
+    void updateAvatar(String avatarUrl, Integer id, LocalDateTime updateTime);
+
+    /**
+     * 修改用户密码
+     * @param md5Pwd
+     * @param id
+     * @param now
+     */
+    void updatePwd(String md5Pwd, Integer id, LocalDateTime now);
 }

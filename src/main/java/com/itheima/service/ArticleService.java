@@ -2,6 +2,7 @@ package com.itheima.service;
 
 import com.itheima.pojo.Article;
 import com.itheima.pojo.PageBean;
+import java.util.List;
 
 public interface ArticleService {
 
@@ -39,4 +40,10 @@ public interface ArticleService {
      * @param id
      */
     void deleteById(Integer id);
+
+    /**
+     * 批量删除文章
+     * @param ids
+     */
+    void deleteByIds(List<Long> ids);
 }

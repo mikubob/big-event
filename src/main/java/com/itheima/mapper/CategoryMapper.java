@@ -39,4 +39,11 @@ public interface CategoryMapper {
      * @param id
      */
     void deleteById(Integer id);
+
+    /**
+     * 统计指定分类下的文章数量
+     * @param categoryId
+     * @return
+     */
+    Integer selectArticleCountByCategoryId(Integer categoryId);
 }

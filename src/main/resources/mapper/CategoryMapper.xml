@@ -20,11 +20,17 @@
     <select id="list" resultType="com.itheima.pojo.Category">
         SELECT id, category_name, category_alias, create_user, create_time, update_time
         FROM category
-        WHERE id = #{Id}
+        WHERE create_user = #{userId}
     </select>
     <select id="findById" resultType="com.itheima.pojo.Category">
         SELECT id, category_name, category_alias, create_user, create_time, update_time
         FROM category
-        WHERE id = #{Id}
+        WHERE id = #{id}
+    </select>
+
+    <select id="selectArticleCountByCategoryId" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM article
+        WHERE category_id = #{categoryId}
     </select>
 </mapper>

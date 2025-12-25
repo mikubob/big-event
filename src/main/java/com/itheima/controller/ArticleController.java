@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -91,6 +92,17 @@ public class ArticleController {
     public Result deleteById(Integer id){
         log.info("删除文章，参数：{}",id);
         articleService.deleteById(id);
+        return Result.success();
+    }
+
+    /**
+     * 批量删除文章
+     * @param ids
+     * @return
+     */
+    public Result deleteByIds(@RequestBody List<Long> ids){
+        log.info("批量删除文章，参数：{}",ids);
+        articleService.deleteByIds(ids);
         return Result.success();
     }
 }

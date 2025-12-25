@@ -22,4 +22,6 @@ public class Message {
     public static final String OLD_PWD_ERROR = "原密码填写不正确";
     //两次输入的密码不一致
     public static final String RE_PWD_ERROR = "两次输入的密码不一致";
+    //该分类下还存在文章，禁止删除
+    public static final String CATEGORY_NOT_EMPTY = "该分类下还存在文章，禁止删除";
 }

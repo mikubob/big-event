@@ -90,4 +90,13 @@ public class ArticleServiceImpl implements ArticleService {
     public void deleteById(Integer id) {
         articleMapper.deleteById(id);
     }
+
+    /**
+     * 批量删除文章
+     * @param ids
+     */
+    @Override
+    public void deleteByIds(List<Long> ids) {
+        articleMapper.deleteByIds(ids);
+    }
 }

@@ -41,4 +41,10 @@ public interface ArticleMapper {
      * @param id
      */
     void deleteById(Integer id);
+
+    /**
+     * 批量删除文章
+     * @param ids
+     */
+    void deleteByIds(List<Long> ids);
 }

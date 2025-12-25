@@ -2,6 +2,7 @@ package com.itheima.service.impl;
 
 import com.itheima.mapper.CategoryMapper;
 import com.itheima.pojo.Category;
+import com.itheima.pojo.Message;
 import com.itheima.service.CategoryService;
 import com.itheima.utils.ThreadLocalUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,6 +72,13 @@ public class CategoryServiceImpl implements CategoryService {
      */
     @Override
     public void deleteById(Integer id) {
+        // 检查该分类下是否还存在文章
+        Integer articleCount = categoryMapper.selectArticleCountByCategoryId(id);
+        if (articleCount > 0) {
+            throw new RuntimeException(Message.CATEGORY_NOT_EMPTY);
+        }
+        
+        // 没有文章时才允许删除分类
         categoryMapper.deleteById(id);
     }
 }

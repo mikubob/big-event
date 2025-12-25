@@ -5,6 +5,34 @@
         INSERT INTO article (title, content, cover_img, state, category_id, create_user, create_time, update_time)
         VALUES (#{title}, #{content}, #{coverImg}, #{state}, #{categoryId}, #{createUser}, #{createTime}, #{updateTime})
     </insert>
+    <update id="update">
+        UPDATE article
+        <set>
+            <if test="title != null">
+                title = #{title},
+            </if>
+            <if test="content != null">
+                content = #{content},
+            </if>
+            <if test="coverImg != null">
+                cover_img = #{coverImg},
+            </if>
+            <if test="state != null">
+                state = #{state},
+            </if>
+            <if test="categoryId != null">
+                category_id = #{categoryId},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
+    <delete id="deleteById">
+        DELETE FROM article
+        WHERE id = #{id}
+    </delete>
     <select id="list" resultType="com.itheima.pojo.Article">
         <!-- 动态sql -->
         SELECT id, title, content, cover_img, state, category_id, create_user, create_time, update_time
@@ -18,5 +46,10 @@
             </if>
             and create_user=#{userId}
         </where>
+    </select>
+    <select id="findById" resultType="com.itheima.pojo.Article">
+        SELECT id, title, content, cover_img, state, category_id, create_user, create_time, update_time
+        FROM article
+        WHERE id = #{id}
     </select>
 </mapper>

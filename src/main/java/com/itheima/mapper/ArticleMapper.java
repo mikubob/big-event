@@ -22,4 +22,23 @@ public interface ArticleMapper {
      * @return
      */
     List<Article> list(Integer userId, Integer categoryId, String state);
+
+    /**
+     * 根据ID查询文章
+     * @param id
+     * @return
+     */
+    Article findById(Integer id);
+
+    /**
+     * 修改文章
+     * @param article
+     */
+    void update(Article article);
+
+    /**
+     * 删除文章
+     * @param id
+     */
+    void deleteById(Integer id);
 }

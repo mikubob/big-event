@@ -1,9 +1,6 @@
 package com.itheima.controller;
 
-import com.itheima.pojo.Article;
-import com.itheima.pojo.Message;
-import com.itheima.pojo.PageBean;
-import com.itheima.pojo.Result;
+import com.itheima.pojo.*;
 import com.itheima.service.ArticleService;
 import com.itheima.utils.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -56,5 +53,44 @@ public class ArticleController {
         log.info("查询文章列表，参数：pageNum:{},pageSize:{},categoryId:{},state:{}",pageNum,pageSize,categoryId,state);
         PageBean<Article> pageBean = articleService.list(pageNum,pageSize,categoryId,state);
         return Result.success(pageBean);
+    }
+
+    /**
+     * 查询文章详情
+     * @param id
+     * @return
+     */
+    @GetMapping("/detail")
+    @Operation(summary = "查询文章详情")
+    public Result<Article> detail(Integer id){
+        log.info("查询文章详情，参数：{}",id);
+        Article article = articleService.findById(id);
+        return Result.success(article);
+    }
+
+    /**
+     * 更新文章
+     * @param article
+     * @return
+     */
+    @PutMapping
+    @Operation(summary = "更新文章")
+    public Result update(@RequestBody @Validated Article article){
+        log.info("更新文章，参数：{}",article);
+        articleService.update(article);
+        return Result.success();
+    }
+
+    /**
+     * 删除文章
+     * @param id
+     * @return
+     */
+    @DeleteMapping
+    @Operation(summary = "删除文章")
+    public Result deleteById(Integer id){
+        log.info("删除文章，参数：{}",id);
+        articleService.deleteById(id);
+        return Result.success();
     }
 }

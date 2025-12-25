@@ -5,6 +5,7 @@ import com.itheima.anno.State;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
+//第一个注解指定的是给哪个注解提供校验规则，第二个注解是验证的参数类型
 public class StateValidation implements ConstraintValidator<State, String> {
 
     /**

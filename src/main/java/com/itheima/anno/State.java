@@ -15,8 +15,8 @@ public @interface State {
     String message() default "state参数只能是已发布或草稿";
 
     // 指定分组
-    Class<?>[] groups() default {};
+    Class<?>[] groups() default {};//作用是告诉JSR303，这个注解在哪个组中
 
     // 负载 获取到State注解的附加信息
-    Class<? extends Payload>[] payload() default {};
+    Class<? extends Payload>[] payload() default {};//作用是告诉JSR303，这个注解的负载是哪些
 }

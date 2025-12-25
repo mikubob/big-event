@@ -18,6 +18,7 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -118,16 +119,33 @@ public class UserController {
     }
 
     /**
-     * 用户修改头像
-     * @param avatarUrl
+     * 用户上传头像（上传新文件并删除旧头像）
+     * @param file 上传的头像文件
      * @return
      */
     @PutMapping("/updateAvatar")
-    @Operation(summary = "用户修改头像")
-    public Result updateAvatar(@RequestParam @URL String avatarUrl){
-        log.info("用户修改头像，头像地址：{}",avatarUrl);
-        userService.updateAvatar(avatarUrl);
-        return Result.success();
+    @Operation(summary = "用户上传头像")
+    public Result uploadAvatar(MultipartFile file) {
+        log.info("用户上传头像，文件名：{}", file.getOriginalFilename());
+        try {
+            // 检查文件是否为空
+            if (file.isEmpty()) {
+                return Result.error("文件不能为空");
+            }
+
+            // 检查文件类型是否为图片
+            String contentType = file.getContentType();
+            if (contentType == null || !contentType.startsWith("image/")) {
+                return Result.error("只支持上传图片文件");
+            }
+
+            // 调用服务上传头像并删除旧头像
+            userService.updateAvatar(file);
+            return Result.success("头像上传成功");
+        } catch (Exception e) {
+            log.error("头像上传失败", e);
+            return Result.error("头像上传失败: " + e.getMessage());
+        }
     }
 
     /**

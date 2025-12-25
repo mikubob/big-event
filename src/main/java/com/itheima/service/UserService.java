@@ -1,7 +1,7 @@
 package com.itheima.service;
 
 import com.itheima.pojo.User;
-import org.hibernate.validator.constraints.URL;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface UserService {
     /**
@@ -25,10 +25,10 @@ public interface UserService {
     void update(User user);
 
     /**
-     * 用户修改头像
-     * @param avatarUrl
+     * 用户修改头像（上传新文件并删除旧头像）
+     * @param file 上传的头像文件
      */
-    void updateAvatar(@URL String avatarUrl);
+    void updateAvatar(MultipartFile file) throws Exception;
 
     /**
      * 用户修改密码

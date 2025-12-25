@@ -17,3 +17,10 @@ mybatis:
   type-aliases-package: com.itheima.pojo
   configuration:
     map-underscore-to-camel-case: true
+
+#阿里云OSS
+aliyun:
+  oss:
+    endpoint: https://oss-cn-beijing.aliyuncs.com
+    bucketName: big-event-showing
+    region: cn-beijing

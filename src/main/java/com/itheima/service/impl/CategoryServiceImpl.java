@@ -6,6 +6,9 @@ import com.itheima.pojo.Message;
 import com.itheima.service.CategoryService;
 import com.itheima.utils.ThreadLocalUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -23,6 +26,10 @@ public class CategoryServiceImpl implements CategoryService {
      * @param category
      */
     @Override
+    @Caching(evict = {
+            @CacheEvict(value = "categoryList", allEntries = true),
+            @CacheEvict(value = "category", key = "#category.id")
+    })
     public void add(Category category) {
         //补充属性值
         category.setCreateTime(LocalDateTime.now());
@@ -40,6 +47,7 @@ public class CategoryServiceImpl implements CategoryService {
      * @return
      */
     @Override
+    @Cacheable(value = "categoryList", key = "'user_' + T(String).valueOf(#root.methodName)")
     public List<Category> list() {
         Map<String,Object> map = ThreadLocalUtil.get();
         Integer userId = (Integer) map.get("id");
@@ -51,6 +59,10 @@ public class CategoryServiceImpl implements CategoryService {
      * @param category
      */
     @Override
+    @Caching(evict = {
+            @CacheEvict(value = "categoryList", allEntries = true),
+            @CacheEvict(value = "category", key = "#category.id")
+    })
     public void update(Category category) {
         category.setUpdateTime(LocalDateTime.now());
         categoryMapper.update(category);
@@ -62,6 +74,7 @@ public class CategoryServiceImpl implements CategoryService {
      * @return
      */
     @Override
+    @Cacheable(value = "category", key = "#id")
     public Category findById(Integer id) {
         return categoryMapper.findById(id);
     }
@@ -71,6 +84,10 @@ public class CategoryServiceImpl implements CategoryService {
      * @param id
      */
     @Override
+    @Caching(evict = {
+            @CacheEvict(value = "categoryList", allEntries = true),
+            @CacheEvict(value = "category", key = "#id")
+    })
     public void deleteById(Integer id) {
         // 检查该分类下是否还存在文章
         Integer articleCount = categoryMapper.selectArticleCountByCategoryId(id);

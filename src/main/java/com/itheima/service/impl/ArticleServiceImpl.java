@@ -7,6 +7,9 @@ import com.itheima.pojo.PageBean;
 import com.itheima.service.ArticleService;
 import com.itheima.utils.ThreadLocalUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import com.github.pagehelper.PageHelper;
 
@@ -24,6 +27,10 @@ public class ArticleServiceImpl implements ArticleService {
      * @param article
      */
     @Override
+    @Caching(evict = {
+            @CacheEvict(value = "articleList", allEntries = true),
+            @CacheEvict(value = "article", key = "#article.id")
+    })
     public void add(Article article) {
         //补充属性值
         article.setCreateTime(LocalDateTime.now());
@@ -45,6 +52,7 @@ public class ArticleServiceImpl implements ArticleService {
      * @return
      */
     @Override
+    @Cacheable(value = "articleList", key = "'page_' + #pageNum + '_' + #pageSize + '_' + (#categoryId != null ? #categoryId : 'all') + '_' + (#state != null ? #state : 'all')")
     public PageBean<Article> list(Integer pageNum, Integer pageSize, Integer categoryId, String state) {
         //1.创建PageBean对象
         PageBean<Article> pageBean = new PageBean<>();
@@ -68,6 +76,7 @@ public class ArticleServiceImpl implements ArticleService {
      * @return
      */
     @Override
+    @Cacheable(value = "article", key = "#id")
     public Article findById(Integer id) {
         return articleMapper.findById(id);
     }
@@ -77,6 +86,10 @@ public class ArticleServiceImpl implements ArticleService {
      * @param article
      */
     @Override
+    @Caching(evict = {
+            @CacheEvict(value = "articleList", allEntries = true),
+            @CacheEvict(value = "article", key = "#article.id")
+    })
     public void update(Article article) {
         article.setUpdateTime(LocalDateTime.now());
         articleMapper.update(article);
@@ -87,6 +100,10 @@ public class ArticleServiceImpl implements ArticleService {
      * @param id
      */
     @Override
+    @Caching(evict = {
+            @CacheEvict(value = "articleList", allEntries = true),
+            @CacheEvict(value = "article", key = "#id")
+    })
     public void deleteById(Integer id) {
         articleMapper.deleteById(id);
     }
@@ -95,6 +112,7 @@ public class ArticleServiceImpl implements ArticleService {
      * 批量删除文章
      * @param ids
      */
+    @CacheEvict(value = "articleList", allEntries = true)
     @Override
     public void deleteByIds(List<Long> ids) {
         articleMapper.deleteByIds(ids);

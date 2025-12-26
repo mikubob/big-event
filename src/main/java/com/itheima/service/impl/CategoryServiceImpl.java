@@ -47,7 +47,7 @@ public class CategoryServiceImpl implements CategoryService {
      * @return
      */
     @Override
-    @Cacheable(value = "categoryList", key = "'user_' + T(String).valueOf(#root.methodName)")
+    @Cacheable(value = "categoryList", key = "'user_' + T(String).valueOf(#root.methodName) + '_' + T(String).valueOf(T(com.itheima.utils.ThreadLocalUtil).get().get('id'))")
     public List<Category> list() {
         Map<String,Object> map = ThreadLocalUtil.get();
         Integer userId = (Integer) map.get("id");

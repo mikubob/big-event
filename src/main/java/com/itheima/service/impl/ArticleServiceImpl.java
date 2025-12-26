@@ -52,7 +52,7 @@ public class ArticleServiceImpl implements ArticleService {
      * @return
      */
     @Override
-    @Cacheable(value = "articleList", key = "'page_' + #pageNum + '_' + #pageSize + '_' + (#categoryId != null ? #categoryId : 'all') + '_' + (#state != null ? #state : 'all')")
+    @Cacheable(value = "articleList", key = "'page_' + #pageNum + '_' + #pageSize + '_' + (#categoryId != null ? #categoryId : 'all') + '_' + (#state != null ? #state : 'all') + '_' + T(String).valueOf(T(com.itheima.utils.ThreadLocalUtil).get().get('id'))")
     public PageBean<Article> list(Integer pageNum, Integer pageSize, Integer categoryId, String state) {
         //1.创建PageBean对象
         PageBean<Article> pageBean = new PageBean<>();

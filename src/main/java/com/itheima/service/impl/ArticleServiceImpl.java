@@ -1,5 +1,6 @@
 package com.itheima.service.impl;
 
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageInfo;
 import com.itheima.mapper.ArticleMapper;
 import com.itheima.pojo.Article;
@@ -61,6 +62,7 @@ public class ArticleServiceImpl implements ArticleService {
         List<Article> articleList = articleMapper.list(userId, categoryId, state);
 
         // 使用PageInfo来安全处理分页结果
+        // 确保即使在某些情况下PageHelper未生效，也能返回正确的分页数据
         PageInfo<Article> pageInfo = new PageInfo<>(articleList);
 
         // 创建并填充PageBean

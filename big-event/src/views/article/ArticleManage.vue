@@ -42,7 +42,7 @@ const articles = ref([])
 
 //分页条数据模型
 const pageNum = ref(1)//当前页
-const total = ref(20)//总条数
+const total = ref(0)//总条数
 const pageSize = ref(3)//每页条数
 
 //当每页条数发生了变化，调用此函数
@@ -56,7 +56,6 @@ const onCurrentChange = (num) => {
     articleList()
 }
 
-
 //回显文章分类
 import { articleCategoryListService, articleListService, articleAddService, articleDeleteService, articleDeleteBatchService } from '@/api/article.js'
 const articleCategoryList = async () => {
@@ -67,28 +66,40 @@ const articleCategoryList = async () => {
 
 //获取文章列表数据
 const articleList = async () => {
+    // 显示加载状态
+    loading.value = true;
+    
     let params = {
         pageNum: pageNum.value,
         pageSize: pageSize.value,
         categoryId: categoryId.value ? categoryId.value : null,
         state: state.value ? state.value : null
     }
-    let result = await articleListService(params);
+    
+    try {
+        let result = await articleListService(params);
 
-    //渲染视图
-    total.value = result.data.total;
-    articles.value = result.data.items;
+        //渲染视图
+        total.value = result.data.total;
+        articles.value = result.data.items;
 
-    //处理数据,给数据模型扩展一个属性categoryName,分类名称
-    for (let i = 0; i < articles.value.length; i++) {
-        let article = articles.value[i];
-        for (let j = 0; j < categorys.value.length; j++) {
-            if (article.categoryId == categorys.value[j].id) {
-                article.categoryName = categorys.value[j].categoryName;
+        //处理数据,给数据模型扩展一个属性categoryName,分类名称
+        articles.value.forEach(article => {
+            const category = categorys.value.find(cat => article.categoryId === cat.id);
+            if (category) {
+                article.categoryName = category.categoryName;
             }
-        }
+        });
+    } catch (error) {
+        console.error('获取文章列表失败:', error);
+    } finally {
+        // 隐藏加载状态
+        loading.value = false;
     }
 }
+
+// 添加loading状态
+const loading = ref(false);
 
 
 articleCategoryList()
@@ -291,7 +302,7 @@ const addNewArticle = () => {
             </el-form-item>
         </el-form>
         <!-- 文章列表 -->
-        <el-table :data="articles" style="width: 100%" @selection-change="handleSelectionChange">
+        <el-table :data="articles" style="width: 100%" @selection-change="handleSelectionChange" v-loading="loading">
             <el-table-column type="selection" width="50"></el-table-column>
             <el-table-column label="文章标题" width="400" prop="title"></el-table-column>
             <el-table-column label="分类" prop="categoryName"></el-table-column>

@@ -24,4 +24,10 @@ public class Message {
     public static final String RE_PWD_ERROR = "两次输入的密码不一致";
     //该分类下还存在文章，禁止删除
     public static final String CATEGORY_NOT_EMPTY = "该分类下还存在文章，禁止删除";
+    //文件不能为空
+    public static final String FILE_NOT_EMPTY = "文件不能为空";
+    //只支持上传图片文件
+    public static final String FILE_TYPE_ERROR = "只支持上传图片文件";
+    //文件上传成功
+    public static final String FILE_UPLOAD_SUCCESS = "文件上传成功";
 }

@@ -128,6 +128,24 @@ const submitArticle = async (clickState) => {
     //把发布状态赋值给数据模型
     articleModel.value.state = clickState;
 
+    // 验证必填字段
+    if (!articleModel.value.title?.trim()) {
+        ElMessage.error('请输入文章标题');
+        return;
+    }
+    if (!articleModel.value.categoryId) {
+        ElMessage.error('请选择文章分类');
+        return;
+    }
+    if (!articleModel.value.coverImg?.trim()) {
+        ElMessage.error('请上传文章封面');
+        return;
+    }
+    if (!articleModel.value.content?.trim()) {
+        ElMessage.error('请输入文章内容');
+        return;
+    }
+
     let result;
     if (articleModel.value.id) {
         // 更新文章

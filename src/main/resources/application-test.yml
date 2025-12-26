@@ -1,0 +1,30 @@
+# CI/CD 测试配置
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password: password
+  
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+  
+  # 禁用Redis以避免连接问题
+  data:
+    redis:
+      repositories:
+        enabled: false
+
+# 阿里云OSS - 使用测试配置
+aliyun:
+  oss:
+    endpoint: https://oss-cn-beijing.aliyuncs.com
+    bucketName: test-bucket
+    region: cn-beijing
+
+logging:
+  level:
+    com.itheima: DEBUG
+    org.springframework.web: DEBUG

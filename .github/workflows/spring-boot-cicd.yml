@@ -27,10 +27,10 @@ jobs:
         
     - name: Build and Test
       run: |
-        mvn clean test
+        mvn clean test -Dspring.profiles.active=test
         
     - name: Package
-      run: mvn package -DskipTests
+      run: mvn package -DskipTests -Dspring.profiles.active=test
       
     - name: Upload JAR
       uses: actions/upload-artifact@v3

@@ -19,9 +19,9 @@ jobs:
         java-version: '21'
         distribution: 'temurin'
     - name: Build with Maven
-      run: mvn -B package --file pom.xml
+      run: mvn -B -P test package --file pom.xml -Dspring.profiles.active=test
     - name: Run Tests
-      run: mvn test
+      run: mvn test -Dspring.profiles.active=test
     - name: Publish Test Results
       uses: dorny/test-reporter@v1
       if: success() || failure()

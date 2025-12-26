@@ -20,6 +20,8 @@ public class LoginInterceptor implements HandlerInterceptor {
         try {
             //验证token
             Map<String,Object> claims= JwtUtil.parseToken(token);
+            //将用户信息存储到ThreadLocal中
+            ThreadLocalUtil.set(claims);
             //放行
             return true;
         } catch (Exception e) {

@@ -180,8 +180,7 @@ public class UserController {
         //2.调用service完成密码的更新
         userService.updatePwd(newPwd);
         //删除redis中的token
-        ValueOperations<String, String> operations = stringRedisTemplate.opsForValue();//获取操作对象
-        operations.getOperations().delete(token);//删除token
+        stringRedisTemplate.delete(token);//删除token
         return Result.success();
     }
 }

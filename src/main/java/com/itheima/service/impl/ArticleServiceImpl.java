@@ -62,11 +62,16 @@ public class ArticleServiceImpl implements ArticleService {
         Map<String,Object> map =ThreadLocalUtil.get();
         Integer userId = (Integer) map.get("id");
         List<Article> articleList = articleMapper.list(userId,categoryId,state);
-        //page中提供了方法，可以获取PageHelper分页查询后，得到的总记录数和当前页数据
-        Page<Article> page = (Page<Article>) articleList;
         //4.封装PageBean对象
-        pageBean.setTotal(page.getTotal());//总记录数
-        pageBean.setItems(page.getResult());//当前页数据
+        if (articleList instanceof Page) {
+            Page<Article> page = (Page<Article>) articleList;
+            pageBean.setTotal(page.getTotal());//总记录数
+            pageBean.setItems(page.getResult());//当前页数据
+        } else {
+            // 如果不是Page类型，手动创建PageBean
+            pageBean.setTotal((long) articleList.size());
+            pageBean.setItems(articleList);
+        }
         return pageBean;
     }
 

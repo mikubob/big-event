@@ -1,4 +1,5 @@
 //导入request.js请求工具
+//导入request.js请求工具
 import request from '@/utils/request.js'
 
 //提供调用注册接口的函数
@@ -35,5 +36,14 @@ export const userInfoUpdateService = (userInfoData)=>{
 export const userAvatarUpdateService = (avatarUrl)=>{
     const params = new URLSearchParams();
     params.append('avatarUrl',avatarUrl)
-    return request.patch('/user/updateAvatar',params)
+    return request.put('/user/updateAvatar',params)
+}
+
+//修改密码
+export const userUpdatePasswordService = (oldPwd, newPwd, rePwd)=>{
+    const params = new URLSearchParams();
+    params.append('old_pwd', oldPwd);
+    params.append('new_pwd', newPwd);
+    params.append('re_pwd', rePwd);
+    return request.post('/user/updatePwd', params);
 }

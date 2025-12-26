@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping
+@RequestMapping("/category")
 @Slf4j
 @Tag(name = "文章分类相关接口")
 public class CategoryController {
@@ -26,7 +26,7 @@ public class CategoryController {
      * @param category
      * @return
      */
-    @RequestMapping
+    @PostMapping
     @Operation(summary = "添加文章分类")
     public Result add(@RequestBody @Validated(Category.Add.class) Category category){
         log.info("添加文章分类，参数：{}",category);

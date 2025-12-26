@@ -14,22 +14,21 @@ const imgUrl= ref(userInfoStore.info.userPic)
 
 //图片上传成功的回调函数
 const uploadSuccess = (result)=>{
+    // 直接上传并更新头像，无需额外调用API
     imgUrl.value = result.data;
-}
-
-
-
-import {userAvatarUpdateService} from '@/api/user.js'
-import {ElMessage} from 'element-plus'
-//头像修改
-const updateAvatar = async ()=>{
-    //调用接口
-    let result = await userAvatarUpdateService(imgUrl.value);
-
-    ElMessage.success(result.msg? result.msg:'修改成功')
-
+    
+    ElMessage.success('头像上传成功')
+    
     //修改pinia中的数据
     userInfoStore.info.userPic = imgUrl.value
+}
+
+import {ElMessage} from 'element-plus'
+
+// 头像修改按钮现在只是触发文件选择
+const updateAvatar = async ()=>{
+    // 触发文件选择
+    uploadRef.value.$el.querySelector('input').click()
 }
 </script>
 
@@ -47,7 +46,7 @@ const updateAvatar = async ()=>{
                     class="avatar-uploader" 
                     :show-file-list="false"
                     :auto-upload="true"
-                    action="/api/upload"
+                    action="/api/user/updateAvatar"
                     name="file"
                     :headers="{'Authorization':tokenStore.token}"
                     :on-success="uploadSuccess"
@@ -59,9 +58,10 @@ const updateAvatar = async ()=>{
                 <el-button type="primary" :icon="Plus" size="large"  @click="uploadRef.$el.querySelector('input').click()">
                     选择图片
                 </el-button>
-                <el-button type="success" :icon="Upload" size="large" @click="updateAvatar">
+                <!-- 移除上传头像按钮，因为文件上传成功后会自动处理 -->
+                <!-- <el-button type="success" :icon="Upload" size="large" @click="updateAvatar">
                     上传头像
-                </el-button>
+                </el-button> -->
             </el-col>
         </el-row>
     </el-card>

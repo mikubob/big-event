@@ -154,7 +154,7 @@ public class UserController {
      * @param token
      * @return
      */
-    @PatchMapping("/updatePwd")
+    @PostMapping("/updatePwd")
     @Operation(summary = "用户修改密码")
     public Result updatePwd(@RequestBody Map<String,String> params,@RequestHeader("Authorization") String token){
         log.info("用户修改密码，参数：{},token：{}",params,token);

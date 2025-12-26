@@ -53,6 +53,7 @@
             </if>
             and create_user=#{userId}
         </where>
+        ORDER BY create_time DESC
     </select>
     <select id="findById" resultType="com.itheima.pojo.Article">
         SELECT id, title, content, cover_img, state, category_id, create_user, create_time, update_time

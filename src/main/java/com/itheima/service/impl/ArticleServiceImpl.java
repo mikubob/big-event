@@ -1,6 +1,6 @@
 package com.itheima.service.impl;
 
-import com.github.pagehelper.Page;
+import com.github.pagehelper.PageInfo;
 import com.itheima.mapper.ArticleMapper;
 import com.itheima.pojo.Article;
 import com.itheima.pojo.PageBean;
@@ -50,24 +50,24 @@ public class ArticleServiceImpl implements ArticleService {
      */
     @Override
     public PageBean<Article> list(Integer pageNum, Integer pageSize, Integer categoryId, String state) {
-        //1.创建PageBean对象
-        PageBean<Article> pageBean = new PageBean<>();
-        //2.开启分页查询pageHelper
-        PageHelper.startPage(pageNum,pageSize);
-        //3.调用mapper查询
-        Map<String,Object> map =ThreadLocalUtil.get();
+        // 设置分页参数
+        PageHelper.startPage(pageNum, pageSize);
+
+        // 获取用户ID
+        Map<String,Object> map = ThreadLocalUtil.get();
         Integer userId = (Integer) map.get("id");
-        List<Article> articleList = articleMapper.list(userId,categoryId,state);
-        //4.封装PageBean对象
-        if (articleList instanceof Page) {
-            Page<Article> page = (Page<Article>) articleList;
-            pageBean.setTotal(page.getTotal());//总记录数
-            pageBean.setItems(page.getResult());//当前页数据
-        } else {
-            // 如果不是Page类型，手动创建PageBean
-            pageBean.setTotal((long) articleList.size());
-            pageBean.setItems(articleList);
-        }
+
+        // 执行查询
+        List<Article> articleList = articleMapper.list(userId, categoryId, state);
+
+        // 使用PageInfo来安全处理分页结果
+        PageInfo<Article> pageInfo = new PageInfo<>(articleList);
+
+        // 创建并填充PageBean
+        PageBean<Article> pageBean = new PageBean<>();
+        pageBean.setTotal(pageInfo.getTotal());
+        pageBean.setItems(pageInfo.getList());
+
         return pageBean;
     }
 
@@ -113,11 +113,11 @@ public class ArticleServiceImpl implements ArticleService {
      * 批量删除文章
      * @param ids
      */
+    @Override
     @Caching(evict = {
             @CacheEvict(value = "articleList", allEntries = true),
             @CacheEvict(value = "article", allEntries = true) // 批量删除时清除所有文章缓存，因为无法逐个清除
     })
-    @Override
     public void deleteByIds(List<Long> ids) {
         articleMapper.deleteByIds(ids);
     }

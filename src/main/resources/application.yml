@@ -31,3 +31,11 @@ aliyun:
     endpoint: https://oss-cn-beijing.aliyuncs.com
     bucketName: big-event-showing
     region: cn-beijing
+
+# PageHelper配置
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+  params: count=countSql
+  auto-runtime-dialect: true

@@ -38,38 +38,7 @@ const categoryId = ref('')
 const state = ref('')
 
 //文章列表数据模型
-const articles = ref([
-    {
-        "id": 5,
-        "title": "陕西旅游攻略",
-        "content": "兵马俑,华清池,法门寺,华山...爱去哪去哪...",
-        "coverImg": "https://big-event-gwd.oss-cn-beijing.aliyuncs.com/9bf1cf5b-1420-4c1b-91ad-e0f4631cbed4.png",
-        "state": "草稿",
-        "categoryId": 2,
-        "createTime": "2023-09-03 11:55:30",
-        "updateTime": "2023-09-03 11:55:30"
-    },
-    {
-        "id": 5,
-        "title": "陕西旅游攻略",
-        "content": "兵马俑,华清池,法门寺,华山...爱去哪去哪...",
-        "coverImg": "https://big-event-gwd.oss-cn-beijing.aliyuncs.com/9bf1cf5b-1420-4c1b-91ad-e0f4631cbed4.png",
-        "state": "草稿",
-        "categoryId": 2,
-        "createTime": "2023-09-03 11:55:30",
-        "updateTime": "2023-09-03 11:55:30"
-    },
-    {
-        "id": 5,
-        "title": "陕西旅游攻略",
-        "content": "兵马俑,华清池,法门寺,华山...爱去哪去哪...",
-        "coverImg": "https://big-event-gwd.oss-cn-beijing.aliyuncs.com/9bf1cf5b-1420-4c1b-91ad-e0f4631cbed4.png",
-        "state": "草稿",
-        "categoryId": 2,
-        "createTime": "2023-09-03 11:55:30",
-        "updateTime": "2023-09-03 11:55:30"
-    },
-])
+const articles = ref([])
 
 //分页条数据模型
 const pageNum = ref(1)//当前页
@@ -152,7 +121,7 @@ const uploadSuccess = (result)=>{
 
 //添加文章
 import {ElMessage, ElMessageBox} from 'element-plus'
-import { articleUpdateService } from '@/api/article.js'
+import { articleUpdateService, articleDetailService } from '@/api/article.js'
 
 // 添加或更新文章
 const submitArticle = async (clickState) => {
@@ -234,8 +203,21 @@ const batchDeleteArticles = async () => {
 
 // 编辑文章
 const editArticle = async (row) => {
-    // 将选中的文章数据填充到表单
-    articleModel.value = { ...row }
+    try {
+        // 如果是编辑现有文章，需要从后端获取完整信息
+        if (row.id) {
+            // 获取完整文章信息
+            const articleDetail = await articleDetailService(row.id);
+            articleModel.value = { ...articleDetail.data };
+        } else {
+            // 将选中的文章数据填充到表单
+            articleModel.value = { ...row }
+        }
+    } catch (error) {
+        // 如果获取详情失败，使用列表中的数据
+        articleModel.value = { ...row };
+        console.error('获取文章详情失败:', error);
+    }
     
     // 显示抽屉
     visibleDrawer.value = true

@@ -41,10 +41,15 @@ export const articleDeleteService = (id)=>{
 
 //批量删除文章
 export const articleDeleteBatchService = (ids)=>{
-    return request.delete('/article/deleteByIds', { data: ids });
+    return request.delete('/article/deleteByIds', { data: ids, headers: { 'Content-Type': 'application/json' }});
 }
 
 //文章修改
 export const articleUpdateService = (articleData)=>{
     return request.put('/article',articleData);
+}
+
+//文章详情
+export const articleDetailService = (id)=>{
+    return request.get('/article/detail',{params:{id:id}});
 }

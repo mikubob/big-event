@@ -33,3 +33,13 @@ export const articleAddService = (articleData)=>{
     return request.post('/article',articleData);
 
 }
+
+//文章删除
+export const articleDeleteService = (id)=>{
+    return request.delete('/article?id=' + id);
+}
+
+//批量删除文章
+export const articleDeleteBatchService = (ids)=>{
+    return request.delete('/article/deleteByIds', { data: ids });
+}

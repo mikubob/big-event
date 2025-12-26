@@ -101,6 +101,8 @@ public class ArticleController {
      * @param ids
      * @return
      */
+    @DeleteMapping("/deleteByIds")
+    @Operation(summary = "批量删除文章")
     public Result deleteByIds(@RequestBody List<Long> ids){
         log.info("批量删除文章，参数：{}",ids);
         articleService.deleteByIds(ids);

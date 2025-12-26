@@ -151,7 +151,7 @@ const uploadSuccess = (result)=>{
 }
 
 //添加文章
-import {ElMessage} from 'element-plus'
+import {ElMessage, ElMessageBox} from 'element-plus'
 const addArticle = async (clickState)=>{
     //把发布状态赋值给数据模型
     articleModel.value.state = clickState;
@@ -166,6 +166,61 @@ const addArticle = async (clickState)=>{
 
     //刷新当前列表
     articleList()
+}
+
+//批量删除相关
+const selectedIds = ref([])
+
+// 选择行时触发
+const handleSelectionChange = (selection) => {
+    selectedIds.value = selection.map(item => item.id)
+}
+
+// 单个删除文章
+const deleteArticle = async (id) => {
+    try {
+        await ElMessageBox.confirm('确定要删除这篇文章吗？', '确认删除', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        })
+        
+        // 调用删除接口
+        const result = await articleDeleteService(id)
+        ElMessage.success('删除成功')
+        
+        // 刷新列表
+        articleList()
+        
+    } catch (error) {
+        console.log('取消删除')
+    }
+}
+
+// 批量删除文章
+const batchDeleteArticles = async () => {
+    if (selectedIds.value.length === 0) {
+        ElMessage.warning('请至少选择一篇文章')
+        return
+    }
+    
+    try {
+        await ElMessageBox.confirm('确定要删除选中的文章吗？', '确认删除', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        })
+        
+        // 调用批量删除接口
+        const result = await articleDeleteBatchService(selectedIds.value)
+        ElMessage.success('删除成功')
+        
+        // 刷新列表
+        articleList()
+        
+    } catch (error) {
+        console.log('取消删除')
+    }
 }
 </script>
 <template>
@@ -197,9 +252,13 @@ const addArticle = async (clickState)=>{
                 <el-button type="primary" @click="articleList">搜索</el-button>
                 <el-button @click="categoryId = ''; state = ''">重置</el-button>
             </el-form-item>
+            <el-form-item>
+                <el-button v-if="selectedIds.length > 0" type="danger" @click="batchDeleteArticles">批量删除({{ selectedIds.length }})</el-button>
+            </el-form-item>
         </el-form>
         <!-- 文章列表 -->
-        <el-table :data="articles" style="width: 100%">
+        <el-table :data="articles" style="width: 100%" @selection-change="handleSelectionChange">
+            <el-table-column type="selection" width="50"></el-table-column>
             <el-table-column label="文章标题" width="400" prop="title"></el-table-column>
             <el-table-column label="分类" prop="categoryName"></el-table-column>
             <el-table-column label="发表时间" prop="createTime"> </el-table-column>
@@ -207,7 +266,7 @@ const addArticle = async (clickState)=>{
             <el-table-column label="操作" width="100">
                 <template #default="{ row }">
                     <el-button :icon="Edit" circle plain type="primary"></el-button>
-                    <el-button :icon="Delete" circle plain type="danger"></el-button>
+                    <el-button :icon="Delete" circle plain type="danger" @click="deleteArticle(row.id)"></el-button>
                 </template>
             </el-table-column>
             <template #empty>

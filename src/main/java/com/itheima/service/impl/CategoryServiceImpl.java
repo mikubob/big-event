@@ -26,10 +26,7 @@ public class CategoryServiceImpl implements CategoryService {
      * @param category
      */
     @Override
-    @Caching(evict = {
-            @CacheEvict(value = "categoryList", allEntries = true),
-            @CacheEvict(value = "category", key = "#category.id")
-    })
+    @CacheEvict(value = "categoryList", allEntries = true) // 只清除列表缓存，新增操作不需要清除单个分类缓存
     public void add(Category category) {
         //补充属性值
         category.setCreateTime(LocalDateTime.now());

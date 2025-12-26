@@ -43,3 +43,8 @@ export const articleDeleteService = (id)=>{
 export const articleDeleteBatchService = (ids)=>{
     return request.delete('/article/deleteByIds', { data: ids });
 }
+
+//文章修改
+export const articleUpdateService = (articleData)=>{
+    return request.put('/article',articleData);
+}

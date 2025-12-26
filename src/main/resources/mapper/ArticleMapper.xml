@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.itheima.mapper.ArticleMapper">
-    <insert id="add">
+    <insert id="add" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO article (title, content, cover_img, state, category_id, create_user, create_time, update_time)
         VALUES (#{title}, #{content}, #{coverImg}, #{state}, #{categoryId}, #{createUser}, #{createTime}, #{updateTime})
     </insert>

@@ -41,7 +41,7 @@ public class UserController {
      * @param password
      * @return
      */
-    @PostMapping("/register")
+    @PostMapping(value = "/register", consumes = {"application/x-www-form-urlencoded", "application/json"})
     @Operation(summary = "用户注册")
     @Validated
     //用户名规则：4-16位，只能是数字、字母、下划线、中划线，密码规则：6-16位，只能是数字、字母、下划线、中划线
@@ -64,7 +64,7 @@ public class UserController {
      * @param password
      * @return
      */
-    @PostMapping("/login")
+    @PostMapping(value = "/login", consumes = {"application/x-www-form-urlencoded", "application/json"})
     @Operation(summary = "用户登录")
     @Validated
     public Result login(@Pattern(regexp = "^[a-zA-Z0-9_-]{4,16}$", message = Message.USERNAME_FORMAT_ERROR) String username,
@@ -123,7 +123,7 @@ public class UserController {
      * @param file 上传的头像文件
      * @return
      */
-    @PutMapping("/updateAvatar")
+    @PostMapping("/updateAvatar")
     @Operation(summary = "用户上传头像")
     public Result uploadAvatar(MultipartFile file) {
         log.info("用户上传头像，文件名：{}", file.getOriginalFilename());
@@ -150,18 +150,20 @@ public class UserController {
 
     /**
      * 用户修改密码
-     * @param params
+     * @param oldPwd
+     * @param newPwd
+     * @param rePwd
      * @param token
      * @return
      */
     @PostMapping("/updatePwd")
     @Operation(summary = "用户修改密码")
-    public Result updatePwd(@RequestBody Map<String,String> params,@RequestHeader("Authorization") String token){
-        log.info("用户修改密码，参数：{},token：{}",params,token);
+    public Result updatePwd(@RequestParam("old_pwd") String oldPwd, 
+                           @RequestParam("new_pwd") String newPwd, 
+                           @RequestParam("re_pwd") String rePwd, 
+                           @RequestHeader("Authorization") String token){
+        log.info("用户修改密码，参数：oldPwd={}, newPwd={}, rePwd={}, token={}",oldPwd,newPwd,rePwd,token);
         //1.校验参数
-        String oldPwd=params.get("old_pwd");//旧密码
-        String newPwd=params.get("new_pwd");//新密码
-        String rePwd = params.get("re_pwd");//重复密码
         if(!StringUtils.hasLength(oldPwd)||!StringUtils.hasLength(newPwd)||!StringUtils.hasLength(rePwd)){
             return Result.error(Message.PARAM_ERROR);
         }
@@ -180,7 +182,7 @@ public class UserController {
         //2.调用service完成密码的更新
         userService.updatePwd(newPwd);
         //删除redis中的token
-        stringRedisTemplate.delete(token);//删除token
+        stringRedisTemplate.delete(token);
         return Result.success();
     }
 }

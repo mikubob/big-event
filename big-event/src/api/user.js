@@ -33,10 +33,12 @@ export const userInfoUpdateService = (userInfoData)=>{
 }
 
 //修改头像
-export const userAvatarUpdateService = (avatarUrl)=>{
-    const params = new URLSearchParams();
-    params.append('avatarUrl',avatarUrl)
-    return request.put('/user/updateAvatar',params)
+export const userAvatarUpdateService = (file)=>{
+    const formData = new FormData();
+    formData.append('file', file);
+    return request.post('/user/updateAvatar', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    })
 }
 
 //修改密码

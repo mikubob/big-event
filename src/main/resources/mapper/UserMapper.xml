@@ -15,7 +15,7 @@
     </resultMap>
 
     <!-- 用户注册 -->
-    <insert id="register" parameterType="map">
+    <insert id="register" parameterType="map" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO user (username, password, create_time, update_time)
         VALUES (#{username}, #{password}, #{createTime}, #{updateTime})
     </insert>
@@ -28,7 +28,6 @@
         WHERE id = #{id}
     </update>
     <update id="updateAvatar">
-        /*"update user set user_pic=#{avatarUrl},update_time=now() where id=#{id}"*/
         UPDATE user
         SET user_pic = #{avatarUrl},
             update_time = #{updateTime}
@@ -36,8 +35,8 @@
     </update>
     <update id="updatePwd">
         UPDATE user
-        SET password = #{newPwd},
-            update_time = #{updateTime}
+        SET password = #{md5Pwd},
+            update_time = #{now}
         WHERE id = #{id}
     </update>
 

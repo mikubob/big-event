@@ -89,7 +89,7 @@ const onCurrentChange = (num) => {
 
 
 //回显文章分类
-import { articleCategoryListService, articleListService,articleAddService } from '@/api/article.js'
+import { articleCategoryListService, articleListService, articleAddService, articleDeleteService, articleDeleteBatchService } from '@/api/article.js'
 const articleCategoryList = async () => {
     let result = await articleCategoryListService();
 
@@ -152,14 +152,23 @@ const uploadSuccess = (result)=>{
 
 //添加文章
 import {ElMessage, ElMessageBox} from 'element-plus'
-const addArticle = async (clickState)=>{
+import { articleUpdateService } from '@/api/article.js'
+
+// 添加或更新文章
+const submitArticle = async (clickState) => {
     //把发布状态赋值给数据模型
     articleModel.value.state = clickState;
 
-    //调用接口
-    let result = await articleAddService(articleModel.value);
-
-    ElMessage.success(result.msg? result.msg:'添加成功');
+    let result;
+    if (articleModel.value.id) {
+        // 更新文章
+        result = await articleUpdateService(articleModel.value);
+        ElMessage.success('更新成功');
+    } else {
+        // 添加文章
+        result = await articleAddService(articleModel.value);
+        ElMessage.success('添加成功');
+    }
 
     //让抽屉消失
     visibleDrawer.value = false;
@@ -222,6 +231,31 @@ const batchDeleteArticles = async () => {
         console.log('取消删除')
     }
 }
+
+// 编辑文章
+const editArticle = async (row) => {
+    // 将选中的文章数据填充到表单
+    articleModel.value = { ...row }
+    
+    // 显示抽屉
+    visibleDrawer.value = true
+}
+
+// 添加新文章（重置表单）
+const addNewArticle = () => {
+    // 重置表单数据
+    articleModel.value = {
+        title: '',
+        categoryId: '',
+        coverImg: '',
+        content: '',
+        state: '',
+        id: undefined // 确保id为undefined，以区分添加和编辑
+    }
+    
+    // 显示抽屉
+    visibleDrawer.value = true
+}
 </script>
 <template>
     <el-card class="page-container">
@@ -229,7 +263,7 @@ const batchDeleteArticles = async () => {
             <div class="header">
                 <span>文章管理</span>
                 <div class="extra">
-                    <el-button type="primary" @click="visibleDrawer = true">添加文章</el-button>
+                    <el-button type="primary" @click="addNewArticle">添加文章</el-button>
                 </div>
             </div>
         </template>
@@ -265,7 +299,7 @@ const batchDeleteArticles = async () => {
             <el-table-column label="状态" prop="state"></el-table-column>
             <el-table-column label="操作" width="100">
                 <template #default="{ row }">
-                    <el-button :icon="Edit" circle plain type="primary"></el-button>
+                    <el-button :icon="Edit" circle plain type="primary" @click="editArticle(row)"></el-button>
                     <el-button :icon="Delete" circle plain type="danger" @click="deleteArticle(row.id)"></el-button>
                 </template>
             </el-table-column>
@@ -320,8 +354,8 @@ const batchDeleteArticles = async () => {
                     </div>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" @click="addArticle('已发布')">发布</el-button>
-                    <el-button type="info" @click="addArticle('草稿')">草稿</el-button>
+                    <el-button type="primary" @click="submitArticle('已发布')">{{ articleModel.id ? '更新' : '发布' }}</el-button>
+                    <el-button type="info" @click="submitArticle('草稿')">{{ articleModel.id ? '更新草稿' : '草稿' }}</el-button>
                 </el-form-item>
             </el-form>
         </el-drawer>

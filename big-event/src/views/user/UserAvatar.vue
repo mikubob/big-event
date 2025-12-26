@@ -13,6 +13,7 @@ const userInfoStore = useUserInfoStore();
 const imgUrl= ref(userInfoStore.info.userPic)
 
 //图片上传成功的回调函数
+import { userInfoService } from '@/api/user.js'
 const uploadSuccess = (result)=>{
     // 直接上传并更新头像，无需额外调用API
     imgUrl.value = result.data;
@@ -21,6 +22,11 @@ const uploadSuccess = (result)=>{
     
     //修改pinia中的数据
     userInfoStore.info.userPic = imgUrl.value
+    
+    // 重新获取用户信息以确保其他组件显示最新数据
+    userInfoService().then(res => {
+        userInfoStore.setInfo(res.data);
+    });
 }
 
 import {ElMessage} from 'element-plus'

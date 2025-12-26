@@ -27,10 +27,7 @@ public class ArticleServiceImpl implements ArticleService {
      * @param article
      */
     @Override
-    @Caching(evict = {
-            @CacheEvict(value = "articleList", allEntries = true),
-            @CacheEvict(value = "article", key = "#article.id")
-    })
+    @CacheEvict(value = "articleList", allEntries = true) // 只清除列表缓存，新增操作不需要清除单个文章缓存
     public void add(Article article) {
         //补充属性值
         article.setCreateTime(LocalDateTime.now());
@@ -52,7 +49,6 @@ public class ArticleServiceImpl implements ArticleService {
      * @return
      */
     @Override
-    @Cacheable(value = "articleList", key = "'page_' + #pageNum + '_' + #pageSize + '_' + (#categoryId != null ? #categoryId : 'all') + '_' + (#state != null ? #state : 'all') + '_' + T(String).valueOf(T(com.itheima.utils.ThreadLocalUtil).get().get('id'))")
     public PageBean<Article> list(Integer pageNum, Integer pageSize, Integer categoryId, String state) {
         //1.创建PageBean对象
         PageBean<Article> pageBean = new PageBean<>();
@@ -117,7 +113,10 @@ public class ArticleServiceImpl implements ArticleService {
      * 批量删除文章
      * @param ids
      */
-    @CacheEvict(value = "articleList", allEntries = true)
+    @Caching(evict = {
+            @CacheEvict(value = "articleList", allEntries = true),
+            @CacheEvict(value = "article", allEntries = true) // 批量删除时清除所有文章缓存，因为无法逐个清除
+    })
     @Override
     public void deleteByIds(List<Long> ids) {
         articleMapper.deleteByIds(ids);

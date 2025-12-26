@@ -1,0 +1,39 @@
+# Production configuration for deployment
+# This file should be used in deployment environments
+
+spring:
+  datasource:
+    driver-class-name: ${DB_DRIVER:com.mysql.cj.jdbc.Driver}
+    url: ${DB_URL:jdbc:mysql://localhost:3306/big_event}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:1234}
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:123456}
+      database: ${REDIS_DATABASE:1}
+      timeout: 2000ms
+      lettuce:
+        pool:
+          max-active: 100
+          max-idle: 10
+          min-idle: 5
+          max-wait: 5000ms
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.itheima.pojo
+  configuration:
+    map-underscore-to-camel-case: true
+
+#阿里云OSS
+aliyun:
+  oss:
+    endpoint: ${OSS_ENDPOINT:https://oss-cn-beijing.aliyuncs.com}
+    bucketName: ${OSS_BUCKET_NAME:big-event-showing}
+    region: ${OSS_REGION:cn-beijing}
+
+server:
+  port: ${PORT:8080}

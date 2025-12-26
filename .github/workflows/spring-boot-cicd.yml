@@ -1,0 +1,90 @@
+name: Spring Boot CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up JDK 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        
+    - name: Cache Maven dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        
+    - name: Build and Test
+      run: |
+        mvn clean test
+        
+    - name: Package
+      run: mvn package -DskipTests
+      
+    - name: Upload JAR
+      uses: actions/upload-artifact@v3
+      with:
+        name: application-jar
+        path: target/*.jar
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    environment: production
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up JDK 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        
+    - name: Download JAR
+      uses: actions/download-artifact@v3
+      with:
+        name: application-jar
+        
+    - name: Build JAR
+      run: mvn clean package -DskipTests
+      
+    - name: Create Deployment
+      uses: chrnorm/deployment-action@v2
+      id: deployment
+      with:
+        token: '${{ secrets.GITHUB_TOKEN }}'
+        environment: production
+        description: 'Deployment of Spring Boot application'
+        initial-status: 'in_progress'
+        
+    - name: Update Deployment Status (Success)
+      if: success()
+      uses: chrnorm/deployment-status@v2
+      with:
+        token: '${{ secrets.GITHUB_TOKEN }}'
+        environment-url: https://big-event-application.herokuapp.com # 替换为你的实际部署URL
+        deployment-id: ${{ steps.deployment.outputs.deployment-id }}
+        state: 'success'
+        description: 'Deployment completed successfully'
+        
+    - name: Update Deployment Status (Failure)
+      if: failure()
+      uses: chrnorm/deployment-status@v2
+      with:
+        token: '${{ secrets.GITHUB_TOKEN }}'
+        deployment-id: ${{ steps.deployment.outputs.deployment-id }}
+        state: 'failure'
+        description: 'Deployment failed'
